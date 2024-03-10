@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 public class DogBreedController extends DogApiBaseController {
@@ -25,7 +26,7 @@ public class DogBreedController extends DogApiBaseController {
     }
 
     @GetMapping("/api/breeds/list/all")
-    public ResponseEntity<?> getAllDogs() {
+    public ResponseEntity<Map<String, Object>> getAllDogs() {
         List<DogBreed> breeds = dogBreedService.findAllBreeds();
         List<String> breedNames = new ArrayList<>();
         for (DogBreed breed : breeds) {
@@ -36,32 +37,32 @@ public class DogBreedController extends DogApiBaseController {
     }
 
     @GetMapping("/api/breed/{breedName}")
-    public ResponseEntity<?> getDogByName(@PathVariable String breedName) {
+    public ResponseEntity<Map<String, Object>> getDogByName(@PathVariable String breedName) {
         DogBreed dogBreed = dogBreedService.findBreedByName(breedName);
         return ApiResponse.buildResponse(HttpStatus.OK, "success", dogBreed);
     }
 
 
     @GetMapping("/api/breed/{breedName}/sub_breeds/list")
-    public ResponseEntity<?> getSubBreedsOfBreed(@PathVariable String breedName) {
+    public ResponseEntity<Map<String, Object>> getSubBreedsOfBreed(@PathVariable String breedName) {
         List<SubBreed> subBreedList = subBreedService.getSubBreedsOfBreed(breedName);
         return ApiResponse.buildResponse(HttpStatus.OK, "success", subBreedList);
     }
 
     @PostMapping("/api/breed/add")
-    public ResponseEntity<?> createNewBreed(@RequestParam String breedName) {
+    public ResponseEntity<Map<String, Object>> createNewBreed(@RequestParam String breedName) {
         DogBreed createdBreed = dogBreedService.createDogBreed(breedName);
         return ApiResponse.buildResponse(HttpStatus.OK, "success", createdBreed);
     }
 
     @DeleteMapping("/api/breed/delete")
-    public ResponseEntity<?> deleteBreedByName(@RequestParam String breedName) {
+    public ResponseEntity<Map<String, Object>> deleteBreedByName(@RequestParam String breedName) {
         dogBreedService.deleteBreedByName(breedName);
         return ApiResponse.buildResponse(HttpStatus.OK, "success", "deleted " + breedName + " successfully");
     }
 
     @PutMapping("/api/breed/update")
-    public ResponseEntity<?> updateBreed(@RequestParam String oldName, @RequestParam String newName) {
+    public ResponseEntity<Map<String, Object>> updateBreed(@RequestParam String oldName, @RequestParam String newName) {
         dogBreedService.updateBreedName(oldName, newName);
         return ApiResponse.buildResponse(HttpStatus.OK, "success", "Breed " + oldName + " updated successfully");
     }

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 @RestController
@@ -22,7 +23,7 @@ public class SubBreedController extends DogApiBaseController {
     }
 
     @GetMapping("/api/sub_breed/list/all")
-    public ResponseEntity<?> getAllSubBreedNames() {
+    public ResponseEntity<Map<String, Object>> getAllSubBreedNames() {
         List<SubBreed> subBreeds = subBreedService.findAllSubBreeds();
         Set<String> subBreedNames = new HashSet<>();
         for (SubBreed breed : subBreeds) {
@@ -33,31 +34,31 @@ public class SubBreedController extends DogApiBaseController {
     }
 
     @GetMapping("/api/sub_breed/{breedName}/{subBreedName}")
-    public ResponseEntity<?> getBreedByName(@PathVariable String breedName, @PathVariable String subBreedName) {
+    public ResponseEntity<Map<String, Object>> getBreedByName(@PathVariable String breedName, @PathVariable String subBreedName) {
         SubBreed subBreed = subBreedService.findSubBreedNameAndBreedName(subBreedName, breedName);
         return ApiResponse.buildResponse(HttpStatus.OK, "success", subBreed);
     }
 
     @GetMapping("/api/sub_breed/{subBreedName}")
-    public ResponseEntity<?> getSubBreedByName(@PathVariable String subBreedName) {
+    public ResponseEntity<Map<String, Object>> getSubBreedByName(@PathVariable String subBreedName) {
         List<SubBreed> subBreed = subBreedService.findSubBreedByName(subBreedName);
         return ApiResponse.buildResponse(HttpStatus.OK, "success", subBreed);
     }
 
     @PostMapping("/api/sub_breed/add")
-    public ResponseEntity<?> createNewSubBreed(@RequestParam String breedName, @RequestParam String subBreedName) {
+    public ResponseEntity<Map<String, Object>> createNewSubBreed(@RequestParam String breedName, @RequestParam String subBreedName) {
         SubBreed createdSubBreed = subBreedService.createBreedSubBreed(breedName, subBreedName);
         return ApiResponse.buildResponse(HttpStatus.OK, "success", createdSubBreed);
     }
 
     @DeleteMapping("/api/sub_breed/delete")
-    public ResponseEntity<?> deleteSubBreedByName(@RequestParam String subBreedName) {
+    public ResponseEntity<Map<String, Object>> deleteSubBreedByName(@RequestParam String subBreedName) {
         subBreedService.deleteSubBreedByName(subBreedName);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @PutMapping("/api/sub_breed/update")
-    public ResponseEntity<?> updateSubBreed(@RequestParam String oldName, @RequestParam String newName) {
+    public ResponseEntity<Map<String, Object>> updateSubBreed(@RequestParam String oldName, @RequestParam String newName) {
         subBreedService.updateSubBreedName(oldName, newName);
         return ApiResponse.buildResponse(HttpStatus.OK, "success", "Sub-breed " + oldName + " updated successfully");
     }

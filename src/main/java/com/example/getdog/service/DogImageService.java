@@ -17,6 +17,7 @@ public class DogImageService {
     final private DogBreedService dogBreedService;
     final private SubBreedService subBreedService;
 
+    Random rand = new Random();
 
     public DogImageService(DogImageRepository dogImageRepository, DogBreedService dogBreedService, SubBreedService subBreedService) {
         this.dogImageRepository = dogImageRepository;
@@ -33,7 +34,6 @@ public class DogImageService {
             throw ApiNotFoundException.breed(breed);
         }
         List<String> imageUrls = dogImageRepository.findImgUrlByBreed(breed);
-        Random rand = new Random();
         int randomIndex = rand.nextInt(imageUrls.size());
         return imageUrls.get(randomIndex);
     }
@@ -49,7 +49,6 @@ public class DogImageService {
             throw ApiNotFoundException.subBreedInBreed(breedName, subBreedName);
         }
         List<String> imageUrls = dogImageRepository.findImgUrlBySubBreed(breedName, subBreedName);
-        Random rand = new Random();
         int randomIndex = rand.nextInt(imageUrls.size());
         return imageUrls.get(randomIndex);
     }
