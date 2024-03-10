@@ -22,13 +22,13 @@ public class DogImageController extends DogApiBaseController {
     @GetMapping("/api/image/{breed}/{subBreed}/random")
     public ResponseEntity<Map<String, Object>> getImageByBreed(@PathVariable String breed, @PathVariable String subBreed) {
         String imageUrl = dogImageService.findRandomImageBySubBreed(breed, subBreed);
-        return ApiResponse.buildResponse(HttpStatus.OK, "success", imageUrl);
+        return ApiResponse.buildResponse(HttpStatus.OK, imageUrl);
     }
 
     @GetMapping("/api/image/{breed}/random")
     public ResponseEntity<Map<String, Object>> getImageByBreed(@PathVariable String breed) {
         String imageUrl = dogImageService.findRandomImageByBreed(breed);
-        return ApiResponse.buildResponse(HttpStatus.OK, "success", imageUrl);
+        return ApiResponse.buildResponse(HttpStatus.OK, imageUrl);
     }
 
 
@@ -37,18 +37,18 @@ public class DogImageController extends DogApiBaseController {
                                                                  @RequestParam(required = false) String subBreedName,
                                                                  @RequestParam String imageUrl) {
         DogImage createdImageUrl = dogImageService.createImageUrl(breedName, subBreedName, imageUrl);
-        return ApiResponse.buildResponse(HttpStatus.OK, "success", createdImageUrl);
+        return ApiResponse.buildResponse(HttpStatus.OK, createdImageUrl);
     }
 
     @DeleteMapping("/api/image/delete")
     public ResponseEntity<Map<String, Object>> deleteImageByImageUrl(@RequestParam String imageUrl) {
         dogImageService.deleteImageByImageUrl(imageUrl);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        return ApiResponse.buildResponse(HttpStatus.OK, "Image URL " + imageUrl + " deleted successfully.");
     }
 
     @PutMapping("/api/image/update")
     public ResponseEntity<Map<String, Object>> updateImageUrl(@RequestParam String oldName, @RequestParam String newName) {
         dogImageService.updateImageUrl(oldName, newName);
-        return ApiResponse.buildResponse(HttpStatus.OK, "success", "Image URL " + oldName + " updated successfully.");
+        return ApiResponse.buildResponse(HttpStatus.OK, "Image URL " + oldName + " updated successfully.");
     }
 }

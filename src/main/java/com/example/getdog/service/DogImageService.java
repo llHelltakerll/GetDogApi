@@ -17,7 +17,7 @@ public class DogImageService {
     final private DogBreedService dogBreedService;
     final private SubBreedService subBreedService;
 
-    Random rand = new Random();
+    private final Random rand = new Random();
 
     public DogImageService(DogImageRepository dogImageRepository, DogBreedService dogBreedService, SubBreedService subBreedService) {
         this.dogImageRepository = dogImageRepository;
@@ -70,6 +70,9 @@ public class DogImageService {
     }
 
     public void deleteImageByImageUrl(String imageUrl) {
+        if (!doesImageUrlExist(imageUrl)) {
+            throw ApiIsExistException.imageUrl(imageUrl);
+        }
         dogImageRepository.deleteByImageUrl(imageUrl);
     }
 

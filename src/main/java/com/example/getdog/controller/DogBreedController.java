@@ -33,37 +33,37 @@ public class DogBreedController extends DogApiBaseController {
             breedNames.add(breed.getBreedName());
         }
         String result = String.join(", ", breedNames);
-        return ApiResponse.buildResponse(HttpStatus.OK, "success", result);
+        return ApiResponse.buildResponse(HttpStatus.OK, result);
     }
 
     @GetMapping("/api/breed/{breedName}")
     public ResponseEntity<Map<String, Object>> getDogByName(@PathVariable String breedName) {
         DogBreed dogBreed = dogBreedService.findBreedByName(breedName);
-        return ApiResponse.buildResponse(HttpStatus.OK, "success", dogBreed);
+        return ApiResponse.buildResponse(HttpStatus.OK, dogBreed);
     }
 
 
     @GetMapping("/api/breed/{breedName}/sub_breeds/list")
     public ResponseEntity<Map<String, Object>> getSubBreedsOfBreed(@PathVariable String breedName) {
         List<SubBreed> subBreedList = subBreedService.getSubBreedsOfBreed(breedName);
-        return ApiResponse.buildResponse(HttpStatus.OK, "success", subBreedList);
+        return ApiResponse.buildResponse(HttpStatus.OK, subBreedList);
     }
 
     @PostMapping("/api/breed/add")
     public ResponseEntity<Map<String, Object>> createNewBreed(@RequestParam String breedName) {
         DogBreed createdBreed = dogBreedService.createDogBreed(breedName);
-        return ApiResponse.buildResponse(HttpStatus.OK, "success", createdBreed);
+        return ApiResponse.buildResponse(HttpStatus.OK, createdBreed);
     }
 
     @DeleteMapping("/api/breed/delete")
     public ResponseEntity<Map<String, Object>> deleteBreedByName(@RequestParam String breedName) {
         dogBreedService.deleteBreedByName(breedName);
-        return ApiResponse.buildResponse(HttpStatus.OK, "success", "deleted " + breedName + " successfully");
+        return ApiResponse.buildResponse(HttpStatus.OK, "deleted " + breedName + " successfully");
     }
 
     @PutMapping("/api/breed/update")
     public ResponseEntity<Map<String, Object>> updateBreed(@RequestParam String oldName, @RequestParam String newName) {
         dogBreedService.updateBreedName(oldName, newName);
-        return ApiResponse.buildResponse(HttpStatus.OK, "success", "Breed " + oldName + " updated successfully");
+        return ApiResponse.buildResponse(HttpStatus.OK, "Breed " + oldName + " updated successfully");
     }
 }

@@ -8,20 +8,28 @@ import java.util.Map;
 
 public class ApiResponse {
 
-    public static ResponseEntity<Map<String, Object>> buildResponse(HttpStatus status, String statusMsg, String message) {
+    public static ResponseEntity<Map<String, Object>> buildResponse(HttpStatus status, String message) {
         Map<String, Object> response = new HashMap<>();
         response.put("code", status.value());
         response.put("message", message);
-        response.put("status", statusMsg);
+        response.put("status", checkHttpCodeValue(status.value()));
         return ResponseEntity.status(status).body(response);
     }
 
-    public static ResponseEntity<Map<String, Object>> buildResponse(HttpStatus status, String statusMsg, Object obj) {
+    public static ResponseEntity<Map<String, Object>> buildResponse(HttpStatus status, Object obj) {
         Map<String, Object> response = new HashMap<>();
         response.put("code", status.value());
         response.put("object", obj);
-        response.put("status", statusMsg);
+        response.put("status", checkHttpCodeValue(status.value()));
         return ResponseEntity.status(status).body(response);
+    }
+
+    public static String checkHttpCodeValue(int code) {
+        if (code >= 400) {
+            return "error";
+        } else {
+            return "success";
+        }
     }
 
 }

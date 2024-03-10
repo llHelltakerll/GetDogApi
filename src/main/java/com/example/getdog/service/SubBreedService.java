@@ -66,6 +66,9 @@ public class SubBreedService {
     }
 
     public void deleteSubBreedByName(String subBreedName) {
+        if (!doesSubBreedExist(subBreedName)) {
+            throw ApiNotFoundException.subBreed(subBreedName);
+        }
         subBreedRepository.deleteBySubBreedName(subBreedName);
     }
 

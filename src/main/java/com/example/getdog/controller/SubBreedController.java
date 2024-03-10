@@ -30,37 +30,37 @@ public class SubBreedController extends DogApiBaseController {
             subBreedNames.add(breed.getSubBreedName());
         }
         String result = String.join(", ", subBreedNames);
-        return ApiResponse.buildResponse(HttpStatus.OK, "success", result);
+        return ApiResponse.buildResponse(HttpStatus.OK, result);
     }
 
     @GetMapping("/api/sub_breed/{breedName}/{subBreedName}")
     public ResponseEntity<Map<String, Object>> getBreedByName(@PathVariable String breedName, @PathVariable String subBreedName) {
         SubBreed subBreed = subBreedService.findSubBreedNameAndBreedName(subBreedName, breedName);
-        return ApiResponse.buildResponse(HttpStatus.OK, "success", subBreed);
+        return ApiResponse.buildResponse(HttpStatus.OK, subBreed);
     }
 
     @GetMapping("/api/sub_breed/{subBreedName}")
     public ResponseEntity<Map<String, Object>> getSubBreedByName(@PathVariable String subBreedName) {
         List<SubBreed> subBreed = subBreedService.findSubBreedByName(subBreedName);
-        return ApiResponse.buildResponse(HttpStatus.OK, "success", subBreed);
+        return ApiResponse.buildResponse(HttpStatus.OK, subBreed);
     }
 
     @PostMapping("/api/sub_breed/add")
     public ResponseEntity<Map<String, Object>> createNewSubBreed(@RequestParam String breedName, @RequestParam String subBreedName) {
         SubBreed createdSubBreed = subBreedService.createBreedSubBreed(breedName, subBreedName);
-        return ApiResponse.buildResponse(HttpStatus.OK, "success", createdSubBreed);
+        return ApiResponse.buildResponse(HttpStatus.OK, createdSubBreed);
     }
 
     @DeleteMapping("/api/sub_breed/delete")
     public ResponseEntity<Map<String, Object>> deleteSubBreedByName(@RequestParam String subBreedName) {
         subBreedService.deleteSubBreedByName(subBreedName);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        return ApiResponse.buildResponse(HttpStatus.OK, "Sub-breed " + subBreedName + " deleted successfully");
     }
 
     @PutMapping("/api/sub_breed/update")
     public ResponseEntity<Map<String, Object>> updateSubBreed(@RequestParam String oldName, @RequestParam String newName) {
         subBreedService.updateSubBreedName(oldName, newName);
-        return ApiResponse.buildResponse(HttpStatus.OK, "success", "Sub-breed " + oldName + " updated successfully");
+        return ApiResponse.buildResponse(HttpStatus.OK, "Sub-breed " + oldName + " updated successfully");
     }
 
 }
