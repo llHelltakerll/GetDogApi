@@ -23,5 +23,5 @@ public interface DogImageRepository extends JpaRepository<DogImage, Long> {
     @Query("UPDATE DogImage di SET di.imageUrl = :newImageUrl WHERE di.imageUrl = :oldImageUrl")
     void updateImageUrlByOldImageUrl(String oldImageUrl, String newImageUrl);
 
-    boolean existsByImageUrl(String ImageUrl);
+    boolean existsByImageUrl(String imageUrl);
 }

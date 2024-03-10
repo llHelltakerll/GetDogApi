@@ -13,9 +13,9 @@ import java.util.Random;
 
 @Service
 public class DogImageService {
-    final private DogImageRepository dogImageRepository;
-    final private DogBreedService dogBreedService;
-    final private SubBreedService subBreedService;
+    private final DogImageRepository dogImageRepository;
+    private final DogBreedService dogBreedService;
+    private final SubBreedService subBreedService;
 
     private final Random rand = new Random();
 
