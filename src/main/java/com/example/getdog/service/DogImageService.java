@@ -8,8 +8,8 @@ import com.example.getdog.util.ApiIsExistException;
 import com.example.getdog.util.ApiNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.security.SecureRandom;
 import java.util.List;
-import java.util.Random;
 
 @Service
 public class DogImageService {
@@ -17,7 +17,7 @@ public class DogImageService {
     private final DogBreedService dogBreedService;
     private final SubBreedService subBreedService;
 
-    private final Random rand = new Random();
+    private final SecureRandom rand = new SecureRandom();
 
     public DogImageService(DogImageRepository dogImageRepository, DogBreedService dogBreedService, SubBreedService subBreedService) {
         this.dogImageRepository = dogImageRepository;
