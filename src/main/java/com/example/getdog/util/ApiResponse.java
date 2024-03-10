@@ -8,6 +8,9 @@ import java.util.Map;
 
 public class ApiResponse {
 
+    private ApiResponse() {
+    }
+
     public static ResponseEntity<Map<String, Object>> buildResponse(HttpStatus status, String message) {
         Map<String, Object> response = new HashMap<>();
         response.put("code", status.value());

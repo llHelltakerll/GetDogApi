@@ -8,6 +8,7 @@ class GetDogApplicationTests {
 
     @Test
     void contextLoads() {
+        System.out.println("Test contextLoads is running...");
     }
 
 }
