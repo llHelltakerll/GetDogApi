@@ -17,11 +17,19 @@ public class DogBreedService {
     }
 
     public List<DogBreed> findAllBreeds() {
-        return dogBreedRepository.findAll();
+        return (List<DogBreed>) dogBreedRepository.findAll();
     }
 
     public boolean doesBreedExist(String breedName) {
-        return dogBreedRepository.existsByBreedName(breedName);
+        return dogBreedRepository.existsByBreedNameAndParentBreedIsNull(breedName);
+    }
+
+    public boolean doesSubBreedExists(String subBreedName) {
+        return dogBreedRepository.existsSubBreedBySubBreedName(subBreedName);
+    }
+
+    public boolean doesSubBreedInBreedExists(String breedName, String subBreedName) {
+        return dogBreedRepository.existsByBreedNameAndParentBreedName(subBreedName, breedName);
     }
 
     public DogBreed findBreedByName(String breedName) throws ApiNotFoundException {
@@ -53,4 +61,57 @@ public class DogBreedService {
         }
         dogBreedRepository.updateBreedName(oldName, newName);
     }
+
+    public List<DogBreed> findAllSubBreedsByBreed(String breedName) {
+        if (!doesBreedExist(breedName)) {
+            throw ApiNotFoundException.breed(breedName);
+        }
+        return dogBreedRepository.findSubBreedsByParentBreedName(breedName);
+    }
+
+    public DogBreed findSubBreedNameAndBreedName(String subBreedName, String breedName) throws ApiIsExistException, ApiNotFoundException {
+        if (!doesBreedExist(breedName)) {
+            throw ApiNotFoundException.breed(breedName);
+        }
+        if (!doesSubBreedExists(subBreedName)) {
+            throw ApiNotFoundException.subBreed(subBreedName);
+        }
+        if (!doesSubBreedInBreedExists(breedName, subBreedName)) {
+            throw ApiNotFoundException.subBreedInBreed(breedName, subBreedName);
+        }
+        return dogBreedRepository.findBreedWithSubBreed(subBreedName, breedName);
+    }
+
+    public DogBreed createBreedSubBreed(String breedName, String subBreedName) {
+        if (!doesBreedExist(breedName)) {
+            throw ApiNotFoundException.breed(breedName);
+        }
+        if (doesSubBreedInBreedExists(breedName, subBreedName)) {
+            throw ApiIsExistException.subBreedWithBreed(breedName, subBreedName);
+        }
+        DogBreed dogBreed = findBreedByName(breedName);
+        DogBreed newDogBreed = new DogBreed();
+        newDogBreed.setBreedName(subBreedName);
+        newDogBreed.setParentBreed(dogBreed);
+        return dogBreedRepository.save(newDogBreed);
+    }
+
+    public void deleteSubBreedByName(String subBreedName) {
+        if (!doesSubBreedExists(subBreedName)) {
+            throw ApiNotFoundException.subBreed(subBreedName);
+        }
+        dogBreedRepository.deleteByBreedName(subBreedName);
+    }
+
+    public void updateSubBreedName(String oldName, String newName) {
+        if (!doesSubBreedExists(oldName)) {
+            throw ApiNotFoundException.subBreed(oldName);
+        }
+        dogBreedRepository.updateBreedName(oldName, newName);
+    }
+
+    public DogBreed save(DogBreed breed) {
+        return dogBreedRepository.save(breed);
+    }
+
 }

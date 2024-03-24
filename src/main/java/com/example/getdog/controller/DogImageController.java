@@ -1,6 +1,5 @@
 package com.example.getdog.controller;
 
-
 import com.example.getdog.model.DogImage;
 import com.example.getdog.service.DogImageService;
 import com.example.getdog.util.ApiResponse;
@@ -30,7 +29,6 @@ public class DogImageController extends DogApiBaseController {
         String imageUrl = dogImageService.findRandomImageByBreed(breed);
         return ApiResponse.buildResponse(HttpStatus.OK, imageUrl);
     }
-
 
     @PostMapping("/api/image/add")
     public ResponseEntity<Map<String, Object>> createNewImageUrl(@RequestParam String breedName,

@@ -12,8 +12,8 @@ public interface DogImageRepository extends JpaRepository<DogImage, Long> {
     @Query("SELECT di.imageUrl FROM DogImage di JOIN di.breed db WHERE db.breedName = ?1")
     List<String> findImgUrlByBreed(String breedName);
 
-    @Query("SELECT di.imageUrl FROM DogImage di JOIN di.breed db JOIN di.subBreed sb WHERE db.breedName = ?1 AND sb.subBreedName = ?2")
-    List<String> findImgUrlBySubBreed(String breedName, String subBreedName);
+    @Query("SELECT di.imageUrl FROM DogImage di JOIN di.breed db JOIN di.subBreed sub WHERE db.breedName = :breedName AND sub.breedName = :subBreedName")
+    List<String> findImageUrlsByBreedAndSubBreed(String breedName, String subBreedName);
 
     @Transactional
     void deleteByImageUrl(String imageUrl);

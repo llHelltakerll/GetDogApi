@@ -12,15 +12,15 @@ public class DogImage {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "breed_id", nullable = false)
+    @JoinColumn(name = "breed_id")
     private DogBreed breed;
 
     @ManyToOne
     @JoinColumn(name = "sub_breed_id")
-    private SubBreed subBreed;
+    private DogBreed subBreed;
 
     @Column(name = "image_url", nullable = false, unique = true)
     private String imageUrl;

@@ -26,4 +26,8 @@ public class ApiNotFoundException extends RuntimeException {
         return new ApiNotFoundException("image URL", imageUrl);
     }
 
+    public static ApiNotFoundException characteristic(String characteristic) {
+        return new ApiNotFoundException("characteristic ", characteristic);
+    }
+
 }

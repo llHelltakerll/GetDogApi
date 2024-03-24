@@ -2,7 +2,6 @@ package com.example.getdog.service;
 
 import com.example.getdog.model.DogBreed;
 import com.example.getdog.model.DogImage;
-import com.example.getdog.model.SubBreed;
 import com.example.getdog.repository.DogImageRepository;
 import com.example.getdog.util.ApiIsExistException;
 import com.example.getdog.util.ApiNotFoundException;
@@ -15,14 +14,12 @@ import java.util.List;
 public class DogImageService {
     private final DogImageRepository dogImageRepository;
     private final DogBreedService dogBreedService;
-    private final SubBreedService subBreedService;
 
     private final SecureRandom rand = new SecureRandom();
 
-    public DogImageService(DogImageRepository dogImageRepository, DogBreedService dogBreedService, SubBreedService subBreedService) {
+    public DogImageService(DogImageRepository dogImageRepository, DogBreedService dogBreedService) {
         this.dogImageRepository = dogImageRepository;
         this.dogBreedService = dogBreedService;
-        this.subBreedService = subBreedService;
     }
 
     public boolean doesImageUrlExist(String imageUrl) {
@@ -42,13 +39,13 @@ public class DogImageService {
         if (!dogBreedService.doesBreedExist(breedName)) {
             throw ApiNotFoundException.breed(breedName);
         }
-        if (!subBreedService.doesSubBreedExist(subBreedName)) {
+        if (!dogBreedService.doesSubBreedExists(subBreedName)) {
             throw ApiNotFoundException.subBreed(subBreedName);
         }
-        if (!subBreedService.doesSubBreadWithBreedExist(breedName, subBreedName)) {
+        if (!dogBreedService.doesSubBreedInBreedExists(breedName, subBreedName)) {
             throw ApiNotFoundException.subBreedInBreed(breedName, subBreedName);
         }
-        List<String> imageUrls = dogImageRepository.findImgUrlBySubBreed(breedName, subBreedName);
+        List<String> imageUrls = dogImageRepository.findImageUrlsByBreedAndSubBreed(breedName, subBreedName);
         int randomIndex = rand.nextInt(imageUrls.size());
         return imageUrls.get(randomIndex);
     }
@@ -57,14 +54,26 @@ public class DogImageService {
         if (doesImageUrlExist(imageUrl)) {
             throw ApiIsExistException.imageUrl(imageUrl);
         }
+
         DogImage dogImage = new DogImage();
-        DogBreed dogBreed = dogBreedService.findBreedByName(breedName);
-        dogImage.setBreed(dogBreed);
         dogImage.setImageUrl(imageUrl);
 
+        if (!dogBreedService.doesBreedExist(breedName)) {
+            throw ApiNotFoundException.breed(breedName);
+        }
         if (subBreedName != null) {
-            SubBreed subBreed = subBreedService.findSubBreedNameAndBreedName(subBreedName, breedName);
-            dogImage.setSubBreed(subBreed);
+            if (!dogBreedService.doesSubBreedExists(subBreedName)) {
+                throw ApiNotFoundException.subBreed(subBreedName);
+            }
+            if (!dogBreedService.doesSubBreedInBreedExists(breedName, subBreedName)) {
+                throw ApiNotFoundException.subBreedInBreed(breedName, subBreedName);
+            }
+            DogBreed dogBreed = dogBreedService.findSubBreedNameAndBreedName(subBreedName, breedName);
+            dogImage.setSubBreed(dogBreed);
+            dogImage.setBreed(dogBreed.getParentBreed());
+        } else {
+            DogBreed dogBreed = dogBreedService.findBreedByName(breedName);
+            dogImage.setBreed(dogBreed);
         }
         return dogImageRepository.save(dogImage);
     }

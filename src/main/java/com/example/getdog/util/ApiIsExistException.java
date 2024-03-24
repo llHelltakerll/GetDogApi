@@ -21,4 +21,8 @@ public class ApiIsExistException extends RuntimeException {
     public static ApiIsExistException imageUrl(String imageUrl) {
         return new ApiIsExistException("image URL", imageUrl);
     }
+
+    public static ApiIsExistException characteristic(String characteristic) {
+        return new ApiIsExistException("characteristic ", characteristic);
+    }
 }
