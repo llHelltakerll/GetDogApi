@@ -18,10 +18,6 @@ public class DogImage {
     @JoinColumn(name = "breed_id")
     private DogBreed breed;
 
-    @ManyToOne
-    @JoinColumn(name = "sub_breed_id")
-    private DogBreed subBreed;
-
     @Column(name = "image_url", nullable = false, unique = true)
     private String imageUrl;
 

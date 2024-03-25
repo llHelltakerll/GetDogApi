@@ -8,7 +8,6 @@ import com.example.getdog.util.ApiNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Set;
 
 @Service
 public class CharacteristicsService {
@@ -20,21 +19,12 @@ public class CharacteristicsService {
         this.dogBreedService = dogBreedService;
     }
 
-    public Set<Characteristics> getCharacteristicsByBreed(String breedName) {
-        DogBreed breed = dogBreedService.findBreedByName(breedName);
-        if (breed.getParentBreed() != null) {
-            throw ApiNotFoundException.breed(breedName);
-        }
-        return breed.getCharacteristics();
-    }
-
-    public Set<Characteristics> getCharacteristicsForBreedAndSubBreed(String breedName, String subBreedName) {
-        DogBreed breed = dogBreedService.findSubBreedNameAndBreedName(subBreedName, breedName);
-        return breed.getCharacteristics();
+    public boolean doesCharacteristicExist(String characteristicName) {
+        return characteristicRepository.existsByCharacteristicName(characteristicName);
     }
 
     public Characteristics addCharacteristic(String characteristicName) {
-        if (characteristicRepository.existsByCharacteristicName(characteristicName)) {
+        if (doesCharacteristicExist(characteristicName)) {
             throw ApiIsExistException.characteristic(characteristicName);
         }
         Characteristics characteristics = new Characteristics();
@@ -43,28 +33,31 @@ public class CharacteristicsService {
     }
 
     public void deleteCharacteristicByName(String characteristicName) {
-        if (!characteristicRepository.existsByCharacteristicName(characteristicName)) {
+        if (!doesCharacteristicExist(characteristicName)) {
             throw ApiNotFoundException.characteristic(characteristicName);
         }
         characteristicRepository.deleteByCharacteristicName(characteristicName);
     }
 
     public void updateByCharacteristic(String oldName, String newName) {
-        if (!characteristicRepository.existsByCharacteristicName(oldName)) {
+        if (!doesCharacteristicExist(oldName)) {
             throw ApiNotFoundException.characteristic(oldName);
+        }
+        if (doesCharacteristicExist(newName)) {
+            throw ApiNotFoundException.characteristic(newName);
         }
         characteristicRepository.updateByCharacteristicName(oldName, newName);
     }
 
     public List<DogBreed> findBreedsByCharacteristic(String characteristicName) {
-        if (!characteristicRepository.existsByCharacteristicName(characteristicName)) {
+        if (!doesCharacteristicExist(characteristicName)) {
             throw ApiNotFoundException.characteristic(characteristicName);
         }
         return characteristicRepository.findByCharacteristicName(characteristicName);
     }
 
     public Characteristics getCharacteristicByName(String characteristicName) {
-        if (!characteristicRepository.existsByCharacteristicName(characteristicName)) {
+        if (!doesCharacteristicExist(characteristicName)) {
             throw ApiNotFoundException.characteristic(characteristicName);
         }
         return characteristicRepository.getCharacteristicsByCharacteristicName(characteristicName);

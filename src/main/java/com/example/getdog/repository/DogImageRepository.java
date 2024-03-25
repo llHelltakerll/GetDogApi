@@ -1,5 +1,6 @@
 package com.example.getdog.repository;
 
+import com.example.getdog.model.DogBreed;
 import com.example.getdog.model.DogImage;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -9,11 +10,9 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface DogImageRepository extends JpaRepository<DogImage, Long> {
-    @Query("SELECT di.imageUrl FROM DogImage di JOIN di.breed db WHERE db.breedName = ?1")
-    List<String> findImgUrlByBreed(String breedName);
 
-    @Query("SELECT di.imageUrl FROM DogImage di JOIN di.breed db JOIN di.subBreed sub WHERE db.breedName = :breedName AND sub.breedName = :subBreedName")
-    List<String> findImageUrlsByBreedAndSubBreed(String breedName, String subBreedName);
+    @Query("SELECT di.imageUrl FROM DogImage di JOIN di.breed db WHERE db = :dogBreed")
+    List<String> findImgUrlByBreed(DogBreed dogBreed);
 
     @Transactional
     void deleteByImageUrl(String imageUrl);

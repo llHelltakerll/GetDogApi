@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 @RestController
 public class CharacteristicsController extends DogApiBaseController {
@@ -19,18 +18,6 @@ public class CharacteristicsController extends DogApiBaseController {
 
     public CharacteristicsController(CharacteristicsService characteristicsService) {
         this.characteristicsService = characteristicsService;
-    }
-
-    @GetMapping("/api/breed/characteristics/{breedName}")
-    public ResponseEntity<Map<String, Object>> getCharacteristicsByBreed(@PathVariable String breedName) {
-        Set<Characteristics> characteristicsSet = characteristicsService.getCharacteristicsByBreed(breedName);
-        return ApiResponse.buildResponse(HttpStatus.OK, characteristicsSet);
-    }
-
-    @GetMapping("/api/sub_breed/characteristics/{breedName}/{subBreedName}")
-    public ResponseEntity<Map<String, Object>> getCharacteristicsBySubBreed(@PathVariable String breedName, @PathVariable String subBreedName) {
-        Set<Characteristics> characteristicsSet = characteristicsService.getCharacteristicsForBreedAndSubBreed(breedName, subBreedName);
-        return ApiResponse.buildResponse(HttpStatus.OK, characteristicsSet);
     }
 
     @GetMapping("/api/breeds/characteristics/{characteristic}/list")

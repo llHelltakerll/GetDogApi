@@ -14,6 +14,9 @@ public interface DogBreedRepository extends CrudRepository<DogBreed, Integer> {
 
     boolean existsByBreedNameAndParentBreedIsNull(String breedName);
 
+    @Query("SELECT db FROM DogBreed db WHERE db.parentBreed IS NULL")
+    List<DogBreed> findAllBreedsWhereParentIdIsNull();
+
     @Transactional
     void deleteByBreedName(String breedName);
 

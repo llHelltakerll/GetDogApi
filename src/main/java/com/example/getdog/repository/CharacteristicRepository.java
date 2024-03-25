@@ -13,6 +13,9 @@ import java.util.List;
 public interface CharacteristicRepository extends CrudRepository<Characteristics, Long> {
     boolean existsByCharacteristicName(String characteristicName);
 
+    @Transactional
+    @Modifying
+    @Query("DELETE FROM Characteristics c WHERE c.characteristicName = :characteristicName")
     void deleteByCharacteristicName(String characteristicName);
 
     @Modifying

@@ -30,4 +30,9 @@ public class ApiNotFoundException extends RuntimeException {
         return new ApiNotFoundException("characteristic ", characteristic);
     }
 
+    public static ApiNotFoundException characteristicEmpty(String breedName,
+                                                           String subBreedName) {
+        return new ApiNotFoundException("characteristics in " + breedName + " and " + subBreedName, subBreedName);
+    }
+
 }

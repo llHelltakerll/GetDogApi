@@ -9,7 +9,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -27,12 +26,7 @@ public class DogBreedController extends DogApiBaseController {
     @GetMapping("/api/breeds/list/all")
     public ResponseEntity<Map<String, Object>> getAllDogs() {
         List<DogBreed> breeds = dogBreedService.findAllBreeds();
-        List<String> breedNames = new ArrayList<>();
-        for (DogBreed breed : breeds) {
-            breedNames.add(breed.getBreedName());
-        }
-        String result = String.join(", ", breedNames);
-        return ApiResponse.buildResponse(HttpStatus.OK, result);
+        return ApiResponse.buildResponse(HttpStatus.OK, breeds);
     }
 
     @GetMapping("/api/breed/{breedName}")
