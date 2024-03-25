@@ -2,6 +2,7 @@ package com.example.getdog.util;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -16,6 +17,7 @@ public class LRUCache<K, V> {
     private final int capacity;
     private final LinkedHashMap<K, V> cache;
 
+    @Autowired
     public LRUCache() {
         this(3);
     }
@@ -27,7 +29,7 @@ public class LRUCache<K, V> {
             protected boolean removeEldestEntry(Map.Entry<K, V> eldest) {
                 boolean shouldRemove = size() > LRUCache.this.capacity;
                 if (shouldRemove) {
-                    logger.info("Removing entry from cache: {}", LRUCache.this.cache.toString());
+                    logger.info("Removing entry from cache: {}", LRUCache.this.cache);
                 }
                 return shouldRemove;
             }
@@ -36,8 +38,7 @@ public class LRUCache<K, V> {
 
     public void put(K key, V value) {
         cache.put(key, value);
-        logger.info("map: {}", LRUCache.this.cache);
-        logger.info("size: {}", LRUCache.this.capacity);
+        logger.info("(put)map: {}", LRUCache.this.cache);
     }
 
     public V get(K key) {
@@ -46,6 +47,7 @@ public class LRUCache<K, V> {
 
     public void remove(K key) {
         cache.remove(key);
+        logger.info("(remove)map: {}", LRUCache.this.cache);
     }
 
     public void clear() {
