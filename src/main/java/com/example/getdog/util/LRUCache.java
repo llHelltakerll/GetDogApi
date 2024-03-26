@@ -71,7 +71,7 @@ public class LRUCache<K, V> {
         Iterator<K> iterator = cache.keySet().iterator();
         while (iterator.hasNext()) {
             K key = iterator.next();
-            if (key instanceof String && ((String) key).startsWith(prefix)) {
+            if (key instanceof String string && string.startsWith(prefix)) {
                 iterator.remove();
             }
         }
@@ -82,7 +82,7 @@ public class LRUCache<K, V> {
         Iterator<K> iterator = cache.keySet().iterator();
         while (iterator.hasNext()) {
             K key = iterator.next();
-            if (key instanceof String && ((String) key).endsWith(suffix)) {
+            if (key instanceof String string && string.endsWith(suffix)) {
                 iterator.remove();
             }
         }
