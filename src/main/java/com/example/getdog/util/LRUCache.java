@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -65,4 +66,26 @@ public class LRUCache<K, V> {
     public int size() {
         return cache.size();
     }
+
+    public void removeKeysByPrefix(String prefix) {
+        Iterator<K> iterator = cache.keySet().iterator();
+        while (iterator.hasNext()) {
+            K key = iterator.next();
+            if (key instanceof String && ((String) key).startsWith(prefix)) {
+                iterator.remove();
+            }
+        }
+
+    }
+
+    public void removeKeysBySuffix(String suffix) {
+        Iterator<K> iterator = cache.keySet().iterator();
+        while (iterator.hasNext()) {
+            K key = iterator.next();
+            if (key instanceof String && ((String) key).endsWith(suffix)) {
+                iterator.remove();
+            }
+        }
+    }
+
 }

@@ -71,9 +71,12 @@ public class DogBreedService {
 
     public void deleteBreedByName(String breedName) {
         if (!doesBreedExist(breedName)) {
-            throw ApiIsExistException.breed(breedName);
+            throw ApiNotFoundException.breed(breedName);
         }
-        breedCache.remove(breedName);
+        if (breedCache.containsKey(breedName)) {
+            breedCache.remove(breedName);
+            breedWithSubBreedCache.removeKeysByPrefix(breedName + "_");
+        }
         dogBreedRepository.deleteByBreedName(breedName);
     }
 
@@ -83,6 +86,10 @@ public class DogBreedService {
         }
         if (doesBreedExist(newName)) {
             throw ApiIsExistException.breed(newName);
+        }
+        if (breedCache.containsKey(oldName)) {
+            breedCache.remove(oldName);
+            breedWithSubBreedCache.removeKeysByPrefix(oldName + "_");
         }
         dogBreedRepository.updateBreedName(oldName, newName);
     }
@@ -133,13 +140,23 @@ public class DogBreedService {
         if (!doesSubBreedExists(subBreedName)) {
             throw ApiNotFoundException.subBreed(subBreedName);
         }
-        subBreedCache.remove(subBreedName);
+        if (subBreedCache.containsKey(subBreedName)) {
+            subBreedCache.remove(subBreedName);
+            breedWithSubBreedCache.removeKeysBySuffix("_" + subBreedName);
+        }
         dogBreedRepository.deleteByBreedName(subBreedName);
     }
 
     public void updateSubBreedName(String oldName, String newName) {
         if (!doesSubBreedExists(oldName)) {
             throw ApiNotFoundException.subBreed(oldName);
+        }
+        if (doesSubBreedExists(newName)) {
+            throw ApiIsExistException.breed(newName);
+        }
+        if (subBreedCache.containsKey(oldName)) {
+            subBreedCache.remove(oldName);
+            breedWithSubBreedCache.removeKeysBySuffix("_" + oldName);
         }
         dogBreedRepository.updateBreedName(oldName, newName);
     }
