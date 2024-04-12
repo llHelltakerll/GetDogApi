@@ -18,7 +18,6 @@ public class DogImageController {
     final DogImageMapper dogImageMapper;
 
     @GetMapping("{breed}/random")
-    @ResponseBody
     public ResponseEntity<String> getImageByBreed(@PathVariable String breed) {
         String imageUrl = dogImageService.findRandomImageByBreed(breed);
         return ResponseEntity.ok(imageUrl);

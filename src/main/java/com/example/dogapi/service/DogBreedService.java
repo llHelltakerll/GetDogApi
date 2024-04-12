@@ -90,7 +90,6 @@ public class DogBreedService {
         if (dogBreed.getSubBreeds()
                 .stream()
                 .anyMatch(breed -> breed.equals(newSubBreed))) {
-            //TODO change with to in
             throw ApiIsExistException.subBreedWithBreed(breedName, newSubBreed.getBreedName());
         }
         newSubBreed.setParentBreed(dogBreed);

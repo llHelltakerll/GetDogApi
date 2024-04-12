@@ -12,7 +12,6 @@ import java.util.Set;
 @Service
 public class CharacteristicsService {
     private final CharacteristicRepository characteristicRepository;
-//    private final DogBreedService dogBreedService;
 
     public CharacteristicsService(CharacteristicRepository characteristicRepository) {
         this.characteristicRepository = characteristicRepository;
@@ -40,7 +39,7 @@ public class CharacteristicsService {
 
     public void delete(String characteristicName) {
         Characteristics characteristics = findCharByCharName(characteristicName);
-        characteristicRepository.delete(characteristics); //TODO to all
+        characteristicRepository.delete(characteristics);
     }
 
     public Characteristics update(String oldName, String newName) {
@@ -54,33 +53,4 @@ public class CharacteristicsService {
         return characteristics.getBreeds();
     }
 
-//    public Characteristics addCharacteristicToBreed(String breedName, String subBreedName,
-//                                                    String characteristicName) {
-//        DogBreed dogBreed = dogBreedService.findBreedWithSubBreed(breedName, subBreedName);
-//        Characteristics characteristics = new Characteristics();
-//        characteristics.setCharacteristicName(characteristicName);
-//        dogBreed.getCharacteristics().add(characteristics);
-//        dogBreedService.save(dogBreed);
-//        return characteristics;
-//    }
-//
-//    public void delete(String breedName, String subBreedName,
-//                       String characteristicName) {
-//        DogBreed dogBreed = dogBreedService.findBreedWithSubBreed(breedName, subBreedName);
-//        Characteristics characteristics = findCharByCharName(characteristicName);
-//        dogBreed.getCharacteristics().remove(characteristics);
-//        dogBreedService.save(dogBreed);
-//    }
-//
-//    public DogBreed update(String breedName, String oldCharacteristicName,
-//                           String subBreedName,
-//                           String newCharacteristicName) {
-//        DogBreed dogBreed = dogBreedService.findBreedWithSubBreed(breedName, subBreedName);
-//        Characteristics oldCharacteristics = findCharByCharName(oldCharacteristicName);
-//        dogBreed.getCharacteristics().remove(oldCharacteristics);
-//
-//        Characteristics newCharacteristics = findCharByCharName(newCharacteristicName);
-//        dogBreed.getCharacteristics().add(newCharacteristics);
-//        return dogBreedService.save(dogBreed);
-//    }
 }
