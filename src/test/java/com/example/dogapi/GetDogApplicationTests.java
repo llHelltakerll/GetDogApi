@@ -8,6 +8,5 @@ class GetDogApplicationTests {
 
     @Test
     void contextLoads() {
-
     }
 }
