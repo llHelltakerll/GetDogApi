@@ -45,6 +45,7 @@ public class CharacteristicsService {
                     if (doesCharacteristicExist(characteristic.getCharacteristicName())) {
                         throw ApiIsExistException.characteristic(characteristic.getCharacteristicName());
                     }
+
                     characteristicRepository.save(characteristic);
                 }
         );
