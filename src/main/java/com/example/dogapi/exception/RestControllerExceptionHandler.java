@@ -8,7 +8,6 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.util.NoSuchElementException;
 
@@ -28,7 +27,7 @@ public class RestControllerExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
     }
 
-    @ExceptionHandler({PropertyValueException.class, NoResourceFoundException.class,
+    @ExceptionHandler({PropertyValueException.class,
             MissingServletRequestParameterException.class})
     public ResponseEntity<ErrorResponse> handleValidationException(Exception ex) {
         ErrorResponse errorResponse = new ErrorResponse(ex.getMessage());

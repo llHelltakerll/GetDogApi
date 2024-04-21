@@ -1,8 +1,6 @@
 package com.example.dogapi.controller;
 
 import com.example.dogapi.dto.DogBreedDTO;
-import com.example.dogapi.mappers.DogBreedMapper;
-import com.example.dogapi.model.DogBreed;
 import com.example.dogapi.service.DogBreedService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -15,34 +13,33 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/v1/sub-breeds")
 public class SubBreedController {
 
-    final DogBreedService dogBreedService;
-    final DogBreedMapper dogBreedMapper;
+    final DogBreedService dogBreedServiceImpl;
 
     @GetMapping("/{breedName}/{subBreedName}")
     public ResponseEntity<DogBreedDTO> findByBreed(@PathVariable String breedName,
                                                    @PathVariable String subBreedName) {
-        DogBreed subBreed = dogBreedService.findBreedWithSubBreed(subBreedName, breedName);
-        return ResponseEntity.ok(dogBreedMapper.dogBreedToDto(subBreed));
+        DogBreedDTO subBreed = dogBreedServiceImpl.findBreedWithSubBreedDTO(breedName, subBreedName);
+        return ResponseEntity.ok(subBreed);
     }
 
     @PostMapping
     public ResponseEntity<DogBreedDTO> create(@Valid @RequestBody DogBreedDTO subBreed,
                                               @RequestParam String breedName) {
-        dogBreedService.createBreedSubBreed(breedName, dogBreedMapper.dtoToDogBreed(subBreed));
+        dogBreedServiceImpl.createBreedSubBreed(breedName, subBreed);
         return ResponseEntity.status(HttpStatus.CREATED).body(subBreed);
     }
 
     @DeleteMapping
     public ResponseEntity<String> delete(@RequestParam String subBreedName) {
-        dogBreedService.deleteSubBreedByName(subBreedName);
+        dogBreedServiceImpl.deleteSubBreedByName(subBreedName);
         return ResponseEntity.ok("Sub-breed " + subBreedName + " deleted successfully");
     }
 
     @PutMapping
     public ResponseEntity<DogBreedDTO> update(@RequestParam String oldName,
                                               @RequestParam String newName) {
-        DogBreed subBreed = dogBreedService.updateSubBreedName(oldName, newName);
-        return ResponseEntity.status(HttpStatus.CREATED).body(dogBreedMapper.dogBreedToDto(subBreed));
+        DogBreedDTO subBreed = dogBreedServiceImpl.updateSubBreedName(oldName, newName);
+        return ResponseEntity.status(HttpStatus.CREATED).body(subBreed);
     }
 
 }

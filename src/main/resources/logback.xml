@@ -5,8 +5,9 @@
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <fileNamePattern>logs/logfile.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
             <maxFileSize>10KB</maxFileSize>
-            <maxHistory>3</maxHistory>
+            <maxHistory>5</maxHistory>
             <totalSizeCap>5MB</totalSizeCap>
+            <cleanHistoryOnStart>true</cleanHistoryOnStart>
         </rollingPolicy>
         <encoder>
             <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
@@ -26,5 +27,7 @@
     <root level="INFO">
         <appender-ref ref="CONSOLE"/>
     </root>
+
+    <logger name="org.springframework.cache" level="DEBUG"/>
 
 </configuration>

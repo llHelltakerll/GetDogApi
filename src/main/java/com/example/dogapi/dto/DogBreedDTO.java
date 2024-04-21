@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import jakarta.validation.constraints.NotBlank;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
 
@@ -21,5 +22,6 @@ public record DogBreedDTO(
         String parentBreed,
         List<String> subBreeds,
         Set<String> characteristics
-) {
+) implements Serializable {
+
 }

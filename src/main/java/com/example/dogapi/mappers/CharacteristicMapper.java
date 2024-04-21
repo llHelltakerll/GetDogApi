@@ -6,6 +6,7 @@ import com.example.dogapi.model.DogBreed;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -17,6 +18,10 @@ public interface CharacteristicMapper {
 
     @Mapping(target = "breeds", ignore = true)
     Characteristics dtoToChar(CharacteristicsDTO dto);
+
+    List<CharacteristicsDTO> listCharToListDto(List<Characteristics> characteristics);
+
+    List<Characteristics> listDtoToCharList(List<CharacteristicsDTO> characteristics);
 
     default Set<String> getBreedNames(Set<DogBreed> breeds) {
         return breeds.stream()

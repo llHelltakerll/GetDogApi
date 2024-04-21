@@ -1,91 +1,89 @@
 package com.example.dogapi.service;
 
+import com.example.dogapi.dto.DogBreedDTO;
 import com.example.dogapi.exception.ApiIsExistException;
 import com.example.dogapi.exception.ApiNotFoundException;
+import com.example.dogapi.mappers.DogBreedMapper;
 import com.example.dogapi.model.DogBreed;
 import com.example.dogapi.repository.DogBreedRepository;
-import com.example.dogapi.util.LRUCache;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
+@Slf4j
+@AllArgsConstructor
 public class DogBreedService {
+    final DogBreedMapper dogBreedMapper;
     private final DogBreedRepository dogBreedRepository;
-    private final LRUCache<String, DogBreed> breedCache;
 
-    public DogBreedService(DogBreedRepository dogRepo, LRUCache<String, DogBreed> breedCache) {
-        this.dogBreedRepository = dogRepo;
-        this.breedCache = breedCache;
-    }
-
-    public List<DogBreed> findAllBreeds() {
-        return dogBreedRepository.findAllBreedsWhereParentIdIsNull();
+    public List<DogBreedDTO> findAllBreeds() {
+        return dogBreedMapper.dogBreedListToDtoList(dogBreedRepository.findAllBreedsWhereParentIdIsNull());
     }
 
     public boolean doesBreedExist(String breedName) {
-        if (breedCache.containsKey(breedName)) {
-            return true;
-        }
         return dogBreedRepository.existsByBreedNameAndParentBreedIsNull(breedName);
     }
 
-    public DogBreed findBreedByName(String breedName) throws ApiNotFoundException {
-        if (breedCache.containsKey(breedName)) {
-            return breedCache.get(breedName);
-        }
-        DogBreed dogBreed = dogBreedRepository.findByBreedName(breedName)
+    public DogBreed findBreedByName(String breedName) {
+        return dogBreedRepository.findByBreedName(breedName)
                 .orElseThrow(() -> ApiNotFoundException.breed(breedName));
-        breedCache.put(breedName, dogBreed);
-        return dogBreed;
     }
 
-    public void createDogBreed(List<DogBreed> breeds) throws ApiIsExistException {
-        breeds.forEach(breed -> {
-                    if (doesBreedExist(breed.getBreedName())) {
-                        throw ApiIsExistException.breed(breed.getBreedName());
-                    }
-                    breedCache.put(breed.getBreedName(), breed);
-                    dogBreedRepository.save(breed);
-                }
-        );
+    @Cacheable(value = "dogBreed", key = "#breedName")
+    public DogBreedDTO findBreedDTOByName(String breedName) {
+        return dogBreedMapper.dogBreedToDto(findBreedByName(breedName));
     }
 
-    public void deleteBreedByName(String breedName) {
-        if (!doesBreedExist(breedName)) {
-            throw ApiNotFoundException.breed(breedName);
+    public void saveDogBreed(DogBreedDTO breedDTO) {
+        DogBreed breed = dogBreedMapper.dtoToDogBreed(breedDTO);
+        if (doesBreedExist(breed.getBreedName())) {
+            throw ApiIsExistException.breed(breed.getBreedName());
         }
-        if (breedCache.containsKey(breedName)) {
-            breedCache.remove(breedName);
+        dogBreedRepository.save(breed);
+    }
+
+    @CacheEvict(value = "dogBreed", key = "#breedName")
+    public void deleteBreedByName(String breedName) {
+        if (dogBreedRepository.existsByBreedNameAndParentBreedIsNull(breedName)) {
+            throw ApiNotFoundException.breed(breedName);
         }
         dogBreedRepository.deleteByBreedName(breedName);
     }
 
-    public DogBreed updateBreedName(String oldName, String newName) throws ApiIsExistException {
+    @CacheEvict(value = "dogBreed", key = "#oldName")
+    @CachePut(value = "dogBreed", key = "#newName")
+    public DogBreedDTO updateBreedName(String oldName, String newName) {
         DogBreed dogBreed = findBreedByName(oldName);
-        if (findBreedByName(newName) != null) {
+        if (dogBreedRepository.existsByBreedNameAndParentBreedIsNull(newName)) {
             throw ApiIsExistException.breed(newName);
         }
-        if (breedCache.containsKey(oldName)) {
-            breedCache.remove(oldName);
-        }
         dogBreed.setBreedName(newName);
-        return dogBreedRepository.save(dogBreed);
+        DogBreed updatedBreed = dogBreedRepository.save(dogBreed);
+        return dogBreedMapper.dogBreedToDto(updatedBreed);
     }
 
     public DogBreed findBreedWithSubBreed(String breedName, String subBreedName)
             throws ApiIsExistException, ApiNotFoundException {
         DogBreed dogBreed = findBreedByName(breedName);
-        if (dogBreed.getSubBreeds()
+        return dogBreed.getSubBreeds()
                 .stream()
-                .noneMatch(breed -> breed.getBreedName().equals(subBreedName))) {
-            throw ApiNotFoundException.subBreedInBreed(breedName, subBreedName);
-        }
-        return dogBreed;
+                .filter(breed -> breed.getBreedName().equals(subBreedName))
+                .findFirst().orElseThrow(() -> ApiNotFoundException.subBreedInBreed(breedName, subBreedName));
     }
 
-    public void createBreedSubBreed(String breedName, DogBreed newSubBreed) {
+    public DogBreedDTO findBreedWithSubBreedDTO(String breedName, String subBreedName) {
+        return dogBreedMapper.dogBreedToDto(findBreedWithSubBreed(breedName, subBreedName));
+    }
+
+    public void createBreedSubBreed(String breedName, DogBreedDTO newSubBreedDTO) {
+        DogBreed newSubBreed = dogBreedMapper.dtoToDogBreed(newSubBreedDTO);
         DogBreed dogBreed = findBreedByName(breedName);
         if (dogBreed.getSubBreeds()
                 .stream()
@@ -96,6 +94,7 @@ public class DogBreedService {
         dogBreedRepository.save(newSubBreed);
     }
 
+    @CacheEvict(value = "subBreed", key = "#subBreedName")
     public void deleteSubBreedByName(String subBreedName) {
         findSubBreedByName(subBreedName);
         dogBreedRepository.deleteByBreedName(subBreedName);
@@ -109,17 +108,15 @@ public class DogBreedService {
         return subBreed;
     }
 
-    public DogBreed updateSubBreedName(String oldName, String newName) {
+    @CacheEvict(value = "dogBreed", key = "#oldName")
+    @CachePut(value = "dogBreed", key = "#newName")
+    public DogBreedDTO updateSubBreedName(String oldName, String newName) {
         if (findSubBreedByName(newName) != null) {
             throw ApiIsExistException.subBreed(newName);
         }
         DogBreed subBreed = findSubBreedByName(oldName);
         subBreed.setBreedName(newName);
-        return dogBreedRepository.save(subBreed);
-    }
-
-    public DogBreed save(DogBreed breed) {
-        return dogBreedRepository.save(breed);
+        return dogBreedMapper.dogBreedToDto(dogBreedRepository.save(subBreed));
     }
 
     public void internalErrorTest() {

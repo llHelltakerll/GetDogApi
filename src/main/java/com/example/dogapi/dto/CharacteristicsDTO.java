@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import jakarta.validation.constraints.NotBlank;
 
+import java.io.Serializable;
 import java.util.Set;
 
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
@@ -19,6 +20,6 @@ record CharacteristicsDTO(
 
         @JsonInclude(JsonInclude.Include.NON_NULL)
         Set<String> breeds
-) {
+) implements Serializable {
 }
 

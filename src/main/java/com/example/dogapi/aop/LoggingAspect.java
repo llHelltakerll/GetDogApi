@@ -12,7 +12,7 @@ import java.util.Arrays;
 @Aspect
 @Slf4j
 @Configuration
-public class LoggingAspectConfig {
+public class LoggingAspect {
 
     @Around("execution(public * com.example.dogapi.controller.*.*(..))")
     public Object loggingAdvice(ProceedingJoinPoint pjp) throws Throwable {

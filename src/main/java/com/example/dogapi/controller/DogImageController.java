@@ -1,13 +1,14 @@
 package com.example.dogapi.controller;
 
 import com.example.dogapi.dto.DogImageDTO;
-import com.example.dogapi.mappers.DogImageMapper;
-import com.example.dogapi.model.DogImage;
 import com.example.dogapi.service.DogImageService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/v1/images")
@@ -15,19 +16,22 @@ import org.springframework.web.bind.annotation.*;
 public class DogImageController {
 
     final DogImageService dogImageService;
-    final DogImageMapper dogImageMapper;
 
-    @GetMapping("{breed}/random")
-    public ResponseEntity<String> getImageByBreed(@PathVariable String breed) {
+    @GetMapping("/{breed}/random")
+    public ResponseEntity<Map<String, String>> getImageByBreed(@PathVariable String breed) {
         String imageUrl = dogImageService.findRandomImageByBreed(breed);
-        return ResponseEntity.ok(imageUrl);
+        Map<String, String> response = new HashMap<>();
+        response.put("message", imageUrl);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("{breed}/{subBreed}/random")
-    public ResponseEntity<String> getImageByBreedAndSubBreed(@PathVariable String breed,
-                                                             @PathVariable String subBreed) {
+    public ResponseEntity<Map<String, String>> getImageByBreedAndSubBreed(@PathVariable String breed,
+                                                                          @PathVariable String subBreed) {
         String imageUrl = dogImageService.findRandomImageBySubBreed(breed, subBreed);
-        return ResponseEntity.ok(imageUrl);
+        Map<String, String> response = new HashMap<>();
+        response.put("message", imageUrl);
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping
@@ -35,8 +39,8 @@ public class DogImageController {
                                               @RequestParam(required = false)
                                               String subBreedName,
                                               @RequestParam String imageUrl) {
-        DogImage createdImageUrl = dogImageService.create(breedName, subBreedName, imageUrl);
-        return ResponseEntity.status(HttpStatus.CREATED).body(dogImageMapper.imageToDto(createdImageUrl));
+        DogImageDTO createdImageUrl = dogImageService.create(breedName, subBreedName, imageUrl);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdImageUrl);
     }
 
     @DeleteMapping
@@ -48,7 +52,7 @@ public class DogImageController {
     @PutMapping
     public ResponseEntity<DogImageDTO> update(@RequestParam String oldName,
                                               @RequestParam String newName) {
-        DogImage dogImage = dogImageService.update(oldName, newName);
-        return ResponseEntity.status(HttpStatus.CREATED).body(dogImageMapper.imageToDto(dogImage));
+        DogImageDTO dogImage = dogImageService.update(oldName, newName);
+        return ResponseEntity.status(HttpStatus.CREATED).body(dogImage);
     }
 }

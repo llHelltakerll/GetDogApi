@@ -1,9 +1,7 @@
 package com.example.dogapi.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -13,6 +11,9 @@ import java.util.Set;
 @Entity
 @Getter
 @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "dog_breed")
 public class DogBreed {
 
@@ -27,7 +28,6 @@ public class DogBreed {
     @JoinColumn(name = "parent_id")
     private DogBreed parentBreed;
 
-    @JsonIgnore
     @OneToMany(mappedBy = "parentBreed", fetch = FetchType.LAZY)
     private List<DogBreed> subBreeds = new ArrayList<>();
 

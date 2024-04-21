@@ -1,8 +1,6 @@
 package com.example.dogapi.controller;
 
 import com.example.dogapi.dto.DogBreedDTO;
-import com.example.dogapi.mappers.DogBreedMapper;
-import com.example.dogapi.model.DogBreed;
 import com.example.dogapi.service.DogBreedService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,43 +14,41 @@ import java.util.List;
 @RequestMapping("/v1/breeds")
 public class DogBreedController {
 
-    final DogBreedService dogBreedService;
-
-    final DogBreedMapper dogBreedMapper;
+    final DogBreedService dogBreedServiceImpl;
 
     @GetMapping
     public ResponseEntity<List<DogBreedDTO>> findAll() {
-        List<DogBreed> breeds = dogBreedService.findAllBreeds();
-        return ResponseEntity.ok(dogBreedMapper.dogBreedListToDtoList(breeds));
+        List<DogBreedDTO> breeds = dogBreedServiceImpl.findAllBreeds();
+        return ResponseEntity.ok(breeds);
     }
 
     @GetMapping("/{breedName}")
     public ResponseEntity<DogBreedDTO> findByName(@PathVariable String breedName) {
-        DogBreed dogBreed = dogBreedService.findBreedByName(breedName);
-        return ResponseEntity.ok(dogBreedMapper.dogBreedToDto(dogBreed));
+        DogBreedDTO dogBreed = dogBreedServiceImpl.findBreedDTOByName(breedName);
+        return ResponseEntity.ok(dogBreed);
     }
 
     @PostMapping
-    public ResponseEntity<List<DogBreedDTO>> create(@RequestBody List<DogBreedDTO> dogBreedDTO) {
-        dogBreedService.createDogBreed(dogBreedMapper.dtoListToDogBreedList(dogBreedDTO));
+    public ResponseEntity<DogBreedDTO> create(@RequestBody DogBreedDTO dogBreedDTO) {
+        dogBreedServiceImpl.saveDogBreed(dogBreedDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(dogBreedDTO);
     }
 
     @DeleteMapping
     public ResponseEntity<String> delete(@RequestParam String breedName) {
-        dogBreedService.deleteBreedByName(breedName);
+        dogBreedServiceImpl.deleteBreedByName(breedName);
         return ResponseEntity.ok("Breed deleted " + breedName + " successfully");
     }
 
     @PutMapping
     public ResponseEntity<DogBreedDTO> update(@RequestParam String oldName,
                                               @RequestParam String newName) {
-        DogBreed dogBreed = dogBreedService.updateBreedName(oldName, newName);
-        return ResponseEntity.ok(dogBreedMapper.dogBreedToDto(dogBreed));
+        DogBreedDTO dogBreed = dogBreedServiceImpl.updateBreedName(oldName, newName);
+        return ResponseEntity.ok(dogBreed);
     }
 
     @GetMapping("/error")
     public void error() {
-        dogBreedService.internalErrorTest();
+        dogBreedServiceImpl.internalErrorTest();
     }
 }
