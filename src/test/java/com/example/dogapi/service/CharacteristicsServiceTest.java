@@ -142,4 +142,3 @@ class CharacteristicsServiceTest {
         assertThrows(ApiNotFoundException.class, () -> characteristicsService.update("nonExistentCharacteristicName", "newCharacteristicName"));
     }
 }
-
