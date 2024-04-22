@@ -14,7 +14,6 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @Service
 @Slf4j
@@ -119,7 +118,4 @@ public class DogBreedService {
         return dogBreedMapper.dogBreedToDto(dogBreedRepository.save(subBreed));
     }
 
-    public void internalErrorTest() {
-        throw new NoSuchElementException("Internal server error");
-    }
 }

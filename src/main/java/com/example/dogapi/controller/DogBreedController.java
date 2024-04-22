@@ -47,8 +47,4 @@ public class DogBreedController {
         return ResponseEntity.ok(dogBreed);
     }
 
-    @GetMapping("/error")
-    public void error() {
-        dogBreedServiceImpl.internalErrorTest();
-    }
 }

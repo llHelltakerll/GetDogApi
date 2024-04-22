@@ -1,6 +1,8 @@
 package com.example.dogapi.service;
 
 import com.example.dogapi.dto.DogBreedDTO;
+import com.example.dogapi.exception.ApiIsExistException;
+import com.example.dogapi.exception.ApiNotFoundException;
 import com.example.dogapi.mappers.DogBreedMapper;
 import com.example.dogapi.model.DogBreed;
 import com.example.dogapi.repository.DogBreedRepository;
@@ -16,6 +18,7 @@ import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
@@ -170,4 +173,71 @@ class DogBreedServiceImplTest {
         // then
         assertThat(result).isEqualTo(subBreedDTO);
     }
+
+    @Test
+    void testSaveDogBreed() throws ApiIsExistException {
+        // given
+        DogBreed breed = DogBreed.builder()
+                .breedName("testBreed")
+                .build();
+        DogBreedDTO breedDTO = dogBreedMapper.dogBreedToDto(breed);
+        given(dogBreedMapper.dtoToDogBreed(breedDTO)).willReturn(breed);
+        given(dogBreedRepository.existsByBreedNameAndParentBreedIsNull("testBreed")).willReturn(false);
+
+        // when
+        dogBreedService.saveDogBreed(breedDTO);
+
+        // then
+        verify(dogBreedRepository).save(breed);
+    }
+
+    @Test
+    void testSaveDogBreed_whenBreedExists_thenThrowException() throws ApiIsExistException {
+        // given
+        DogBreed breed = DogBreed.builder()
+                .breedName("testBreed")
+                .build();
+        DogBreedDTO breedDTO = dogBreedMapper.dogBreedToDto(breed);
+        given(dogBreedMapper.dtoToDogBreed(breedDTO)).willReturn(breed);
+        given(dogBreedRepository.existsByBreedNameAndParentBreedIsNull("testBreed")).willReturn(true);
+
+        // when and then
+        assertThrows(ApiIsExistException.class, () -> dogBreedService.saveDogBreed(breedDTO));
+    }
+
+    @Test
+    void testDeleteBreedByName_whenBreedNotExists_thenThrowException() {
+        // given
+        String breedName = "testBreed";
+        given(dogBreedRepository.existsByBreedNameAndParentBreedIsNull((breedName))).willReturn(true);
+
+        // when and then
+        assertThrows(ApiNotFoundException.class, () -> dogBreedService.deleteBreedByName(breedName));
+    }
+
+    @Test
+    void updateBreedName_whenNewBreedNameExists_thenThrowException() {
+        // given
+        String oldName = "testBreedOld";
+        String newName = "testBreedNew";
+        DogBreed breed = new DogBreed();
+        breed.setBreedName(oldName);
+        given(dogBreedRepository.findByBreedName(oldName)).willReturn(Optional.of(breed));
+        given(dogBreedRepository.existsByBreedNameAndParentBreedIsNull(newName)).willReturn(true);
+
+        // when and then
+        assertThrows(ApiIsExistException.class, () -> dogBreedService.updateBreedName(oldName, newName));
+    }
+
+    @Test
+    void updateBreedName_whenBreedNotExists_thenThrowException() {
+        // given
+        String oldName = "testBreedOld";
+        String newName = "testBreedNew";
+        given(dogBreedRepository.findByBreedName(oldName)).willReturn(Optional.empty());
+
+        // when and then
+        assertThrows(ApiNotFoundException.class, () -> dogBreedService.updateBreedName(oldName, newName));
+    }
+
 }

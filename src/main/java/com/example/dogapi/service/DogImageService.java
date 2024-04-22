@@ -31,10 +31,11 @@ public class DogImageService {
                 .stream()
                 .map(DogImage::getImageUrl)
                 .toList());
+        for (DogBreed subBreed : dogBreed.getSubBreeds()) {
+            imageUrls.addAll(dogImageRepository.findImgUrlByBreed(subBreed));
+        }
         if (imageUrls.isEmpty()) {
-            for (DogBreed subBreed : dogBreed.getSubBreeds()) {
-                imageUrls.addAll(dogImageRepository.findImgUrlByBreed(subBreed));
-            }
+            return "no images";
         }
         int randomIndex = rand.nextInt(imageUrls.size());
         return imageUrls.get(randomIndex);
@@ -46,11 +47,6 @@ public class DogImageService {
         List<String> imageUrls = new java.util.ArrayList<>(dogBreed.getImages().stream()
                 .map(DogImage::getImageUrl)
                 .toList());
-        if (imageUrls.isEmpty()) {
-            for (DogBreed subBreed : dogBreed.getSubBreeds()) {
-                imageUrls.addAll(dogImageRepository.findImgUrlByBreed(subBreed));
-            }
-        }
         if (imageUrls.isEmpty()) {
             return "no images";
         }

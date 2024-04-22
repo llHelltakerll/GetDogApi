@@ -14,6 +14,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -81,6 +82,22 @@ class DogImageServiceTest {
         given(dogBreedServiceImpl.findBreedByName(breedName)).willReturn(dogBreed);
 
         assertEquals(imageUrl, dogImageService.findRandomImageByBreed(breedName));
+    }
+
+    @Test
+    void testFindRandomImageByBreed_whenBreedImageUrlListIsEmpty_returnNoImages() {
+        String breedName = "breedName";
+        dogBreed.setImages(Collections.emptyList());
+        given(dogBreedServiceImpl.findBreedByName(breedName)).willReturn(dogBreed);
+
+        assertEquals("no images", dogImageService.findRandomImageByBreed(breedName));
+    }
+
+    void testFindRandomImageByBreed_whenBreedNotExists_thenThrowException() {
+        String breedName = "breedName";
+        String imageUrl = "imageUrl";
+        dogBreed.setImages(List.of(DogImage.builder().imageUrl(imageUrl).build()));
+        given(dogBreedServiceImpl.findBreedByName(breedName)).willReturn(dogBreed);
     }
 
     @Test
