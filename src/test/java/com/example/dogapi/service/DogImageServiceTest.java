@@ -93,13 +93,6 @@ class DogImageServiceTest {
         assertEquals("no images", dogImageService.findRandomImageByBreed(breedName));
     }
 
-    void testFindRandomImageByBreed_whenBreedNotExists_thenThrowException() {
-        String breedName = "breedName";
-        String imageUrl = "imageUrl";
-        dogBreed.setImages(List.of(DogImage.builder().imageUrl(imageUrl).build()));
-        given(dogBreedServiceImpl.findBreedByName(breedName)).willReturn(dogBreed);
-    }
-
     @Test
     void testFindRandomImageBySubBreed() throws ApiIsExistException {
         String breedName = "breedName";

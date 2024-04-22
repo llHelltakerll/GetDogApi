@@ -86,6 +86,43 @@ class DogBreedServiceImplTest {
     }
 
     @Test
+    void testFindSubBreedByName() {
+        // given
+        String subBreedName = "Yellow";
+        String breedName = "Labrador";
+        DogBreed subBreed = DogBreed.builder()
+                .breedName(subBreedName)
+                .parentBreed(DogBreed.builder()
+                        .breedName(breedName)
+                        .build())
+                .build();
+        given(dogBreedRepository.findByBreedName(breedName)).willReturn(Optional.of(subBreed));
+
+        // when
+        DogBreed result = dogBreedService.findSubBreedByName(breedName);
+
+        // then
+        assertThat(result).isEqualTo(subBreed);
+    }
+
+    @Test
+    void testFindSubBreedByName_parentBreedIsNull_throwsNotFoundException() {
+        // given
+        String subBreedName = "Yellow";
+        String breedName = "Labrador";
+        DogBreed subBreed = DogBreed.builder()
+                .breedName(subBreedName)
+                .parentBreed(null)
+                .build();
+        given(dogBreedRepository.findByBreedName(breedName)).willReturn(Optional.of(subBreed));
+
+        // when
+
+        // then
+        assertThrows(ApiNotFoundException.class, () -> dogBreedService.findSubBreedByName(breedName));
+    }
+
+    @Test
     void testFindBreedDTOByName() {
         // given
         String breedName = "Poodle";
@@ -238,6 +275,19 @@ class DogBreedServiceImplTest {
 
         // when and then
         assertThrows(ApiNotFoundException.class, () -> dogBreedService.updateBreedName(oldName, newName));
+    }
+
+    @Test
+    void testDeleteSubBreedByName() {
+        // given
+        String subBreedName = "Yellow";
+        given(dogBreedRepository.existsByBreedNameAndParentBreedIsNull(subBreedName)).willReturn(false);
+
+        // when
+        dogBreedService.deleteBreedByName(subBreedName);
+
+        // then
+        verify(dogBreedRepository).deleteByBreedName(subBreedName);
     }
 
 }
