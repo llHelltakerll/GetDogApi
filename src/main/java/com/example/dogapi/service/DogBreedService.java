@@ -110,7 +110,7 @@ public class DogBreedService {
     @CacheEvict(value = "dogBreed", key = "#oldName")
     @CachePut(value = "dogBreed", key = "#newName")
     public DogBreedDTO updateSubBreedName(String oldName, String newName) {
-        if (findSubBreedByName(newName) != null) {
+        if (dogBreedRepository.findByBreedName(newName).isPresent()) {
             throw ApiIsExistException.subBreed(newName);
         }
         DogBreed subBreed = findSubBreedByName(oldName);

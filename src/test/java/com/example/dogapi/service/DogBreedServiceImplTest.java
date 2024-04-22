@@ -281,13 +281,49 @@ class DogBreedServiceImplTest {
     void testDeleteSubBreedByName() {
         // given
         String subBreedName = "Yellow";
-        given(dogBreedRepository.existsByBreedNameAndParentBreedIsNull(subBreedName)).willReturn(false);
+        String parentBreedName = "Labrador";
+        DogBreed subBreed = DogBreed.builder()
+                .breedName(subBreedName)
+                .parentBreed(DogBreed.builder()
+                        .breedName(parentBreedName)
+                        .build())
+                .build();
+        given(dogBreedRepository.findByBreedName(subBreedName)).willReturn(Optional.ofNullable(subBreed));
 
         // when
-        dogBreedService.deleteBreedByName(subBreedName);
+        dogBreedService.deleteSubBreedByName(subBreedName);
 
         // then
         verify(dogBreedRepository).deleteByBreedName(subBreedName);
+    }
+
+    @Test
+    void testUpdateSubBreedName_Success() {
+        String oldName = "oldName";
+        String newName = "newName";
+        String parentBreedName = "parentBreedName";
+        DogBreed parentBreed = DogBreed.builder()
+                .breedName(parentBreedName)
+                .build();
+        DogBreed subBreed = new DogBreed();
+        subBreed.setBreedName(oldName);
+        subBreed.setId(1L);
+        subBreed.setParentBreed(parentBreed);
+        DogBreed newDogBreed = DogBreed.builder()
+                .breedName(subBreed.getBreedName())
+                .id(subBreed.getId())
+                .parentBreed(parentBreed)
+                .build();
+        DogBreedDTO newSubBreedDTO = dogBreedMapper.dogBreedToDto(newDogBreed);
+
+        given(dogBreedRepository.findByBreedName(oldName)).willReturn(Optional.of(subBreed));
+        given(dogBreedRepository.findByBreedName(newName)).willReturn(Optional.empty());
+        given(dogBreedRepository.save(any())).willReturn(any());
+        given(dogBreedMapper.dogBreedToDto(newDogBreed)).willReturn(newSubBreedDTO);
+
+        DogBreedDTO result = dogBreedService.updateSubBreedName(oldName, newName);
+
+        assertEquals(newSubBreedDTO, result);
     }
 
 }
